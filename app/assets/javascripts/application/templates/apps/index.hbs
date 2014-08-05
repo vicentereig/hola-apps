@@ -1,0 +1,22 @@
+{{#if content}}
+<table class="table">
+    <thead>
+        <th></th>
+        <th>App Name</th>
+        <th>Version</th>
+        <th>Rating</th>
+        <th>Rating count</th>
+    </thead>
+    {{#each app in controller}}
+        <tr>
+            <td><img class="media-object" width="60" height="60" {{bind-attr src=app.artworkUrl60}}/></td>
+            <td>{{truncate app.trackName 40}}</td>
+            <td>{{app.version}}</td>
+            <td>{{app.averageUserRating}}</td>
+            <td>{{app.userRatingCount}}</td>
+        </tr>
+    {{/each}}
+</table>
+{{else}}
+<p>No results found.</p>
+{{/if}}
