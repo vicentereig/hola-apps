@@ -4,6 +4,6 @@ Watchtower.Router.reopen({
 
 Watchtower.Router.map(function() {
   this.resource('apps', function(){
-    this.route('/');
+    this.route('search');
   });
 });

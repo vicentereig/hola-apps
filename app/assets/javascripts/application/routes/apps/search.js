@@ -1,4 +1,4 @@
-Watchtower.AppsIndexRoute = Ember.Route.extend({
+Watchtower.AppsSearchRoute = Ember.Route.extend({
     queryParams: {
         term: {
             refreshModel: true

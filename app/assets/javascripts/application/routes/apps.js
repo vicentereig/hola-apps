@@ -4,9 +4,9 @@ Watchtower.AppsRoute = Em.Route.extend({
             refreshModel: true
         }
     },
-
-    setupController: function(controller, model) {
-        controller.set('term', this.paramsFor('apps').term);
+    beforeModel: function() {
+        this.controllerFor('apps').set('term', this.paramsFor('apps').term);
+        this.transitionTo('apps.search', {queryParams: this.paramsFor('apps')});
     }
 
 });
