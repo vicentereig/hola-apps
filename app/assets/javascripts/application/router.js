@@ -6,4 +6,5 @@ Watchtower.Router.map(function() {
   this.resource('apps', function(){
     this.route('search');
   });
+  this.resource('following');
 });

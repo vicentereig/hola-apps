@@ -1,13 +1,22 @@
 {{#if selectedApps}}
-    {{#if groupApps}}
-        {{truncate firstApp.trackName 20}}
-        and
-        {{appBucket.length}} more.
-    {{else}}
-        {{#each app in selectedApps}}
-            {{truncate app.trackName 20}}
-        {{/each}}
-    {{/if}}
-    <a {{action unselectAll}}>Unselect all</a>
-    <button class="btn btn-primary">Follow</button>
+    <div class="panel panel-info">
+        <div class="panel-heading">Start Following Apps!</div>
+        <ul class="list-group">
+            {{#if groupApps}}
+                <li class="list-group-item">{{truncate firstApp.trackName 20}}</li>
+                <li class="list-group-item">and {{appBucket.length}} more.</li>
+            {{else}}
+                {{#each app in selectedApps}}
+                    <li class="list-group-item">{{truncate app.trackName 20}}</li>
+                {{/each}}
+            {{/if}}
+        </ul>
+        <div class="panel-footer">
+            <a {{action unselectAll}}>Unselect all</a>
+            {{#link-to 'following' class='btn btn-primary pull-right'}}Follow{{/link-to}}
+
+            <span class="clearfix"></span>
+        </div>
+    </div>
+
 {{/if}}

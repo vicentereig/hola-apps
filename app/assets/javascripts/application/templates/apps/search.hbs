@@ -1,35 +1,44 @@
 {{#if content}}
-    {{follow-apps selectedApps=selectedApps threshold=3}}
-
-    <table class="table">
-        <thead>
-            <th></th>
-            <th></th>
-            <th>App Name</th>
-            <th>Version</th>
-            <th>Rating</th>
-            <th>Rating count</th>
-        </thead>
-        <tbody>
-        {{#each app in controller}}
-            <tr>
-                <td>{{input type="checkbox" name="isSelected" checked=app.isSelected}}</td>
-                <td><img class="media-object" width="60" height="60" {{bind-attr src=app.artworkUrl60}}/></td>
-                <td>{{truncate app.trackName 40}}</td>
-                <td>{{app.version}}</td>
-                <td class="numeric">{{app.averageUserRating}}</td>
-                <td class="numeric">{{format app.userRatingCount}}</td>
-            </tr>
-        {{/each}}
-        </tbody>
-    </table>
+    <div class="row">
+        <div class="col-md-9">
+            <table class="table">
+                <thead>
+                    <th></th>
+                    <th></th>
+                    <th>App Name</th>
+                    <th>Version</th>
+                    <th>Rating</th>
+                    <th>Rating count</th>
+                </thead>
+                <tbody>
+                {{#each app in controller}}
+                    <tr>
+                        <td>{{input type="checkbox" name="isSelected" checked=app.isSelected}}</td>
+                        <td><img class="media-object" width="60" height="60" {{bind-attr src=app.artworkUrl60}}/></td>
+                        <td>{{truncate app.trackName 40}}</td>
+                        <td>{{app.version}}</td>
+                        <td class="numeric">{{app.averageUserRating}}</td>
+                        <td class="numeric">{{format app.userRatingCount}}</td>
+                    </tr>
+                {{/each}}
+                </tbody>
+            </table>
+        </div>
+        <div class="col-md-3">
+            {{follow-apps selectedApps=selectedApps threshold=5}}
+        </div>
+    </div>
 {{else}}
-    <div class="bs-callout bs-callout-info">
-        <h4>No results found.</h4>
-        <p>
-            Some popular searches are {{#link-to 'apps' (query-params term='poo')}}poo{{/link-to}},
-            {{#link-to 'apps' (query-params term='farts')}}farts{{/link-to}}, and
-            {{#link-to 'apps' (query-params term='yolo')}}yolo{{/link-to}}
-        </p>
+    <div class="row">
+        <div class="col-md-9">
+            <div class="bs-callout bs-callout-info">
+                <h4>No results found.</h4>
+                <p>
+                    Some popular searches are {{#link-to 'apps' (query-params term='poo')}}poo{{/link-to}},
+                    {{#link-to 'apps' (query-params term='farts')}}farts{{/link-to}}, and
+                    {{#link-to 'apps' (query-params term='yolo')}}yolo{{/link-to}}
+                </p>
+            </div>
+        </div>
     </div>
 {{/if}}
