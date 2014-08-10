@@ -3,7 +3,7 @@ class Api::SoftwareController < ApplicationController
 
   def index
     search_service = SoftwareSearchService.new(self)
-    results = search_service.perform(params[:term])
+    search_service.perform(params[:term])
   end
 
   def search_results_found(results)
