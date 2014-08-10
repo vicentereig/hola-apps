@@ -24,9 +24,12 @@
         </tbody>
     </table>
 {{else}}
-    <p>No results found.
-       Some popular searches are {{#link-to 'apps' (query-params term='poo')}}poo{{/link-to}},
-        {{#link-to 'apps' (query-params term='farts')}}farts{{/link-to}}, and
-        {{#link-to 'apps' (query-params term='yolo')}}yolo{{/link-to}}
-    </p>
+    <div class="bs-callout bs-callout-info">
+        <h4>No results found.</h4>
+        <p>
+            Some popular searches are {{#link-to 'apps' (query-params term='poo')}}poo{{/link-to}},
+            {{#link-to 'apps' (query-params term='farts')}}farts{{/link-to}}, and
+            {{#link-to 'apps' (query-params term='yolo')}}yolo{{/link-to}}
+        </p>
+    </div>
 {{/if}}
