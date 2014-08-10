@@ -37,11 +37,12 @@ Watchtower.AppAdapter =  DS.RESTAdapter.extend({
 });
 
 Watchtower.App = DS.Model.extend({
-    trackName: DS.attr('string'),
-    description: DS.attr('string'),
-    artistName: DS.attr('string'),
-    artworkUrl60: DS.attr('string'),
-    userRatingCount: DS.attr('number'),
-    version: DS.attr('string'),
-    averageUserRating: DS.attr('number')
+    trackName:         DS.attr('string'),
+    description:       DS.attr('string'),
+    artistName:        DS.attr('string'),
+    artworkUrl60:      DS.attr('string'),
+    userRatingCount:   DS.attr('number'),
+    version:           DS.attr('string'),
+    averageUserRating: DS.attr('number'),
+    isSelected:        DS.attr('boolean', {defaultValue: false})
 });

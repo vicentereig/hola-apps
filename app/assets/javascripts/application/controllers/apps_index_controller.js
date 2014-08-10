@@ -1,4 +1,6 @@
 Watchtower.AppsIndexController = Em.ArrayController.extend({
-    needs: ['apps'],
-    term: null
+    term: null,
+    selectedApps: function() {
+        return this.get('content').filterBy('isSelected', true);
+    }.property('content.@each.isSelected')
 });

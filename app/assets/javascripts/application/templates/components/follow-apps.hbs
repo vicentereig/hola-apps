@@ -1,0 +1,13 @@
+{{#if selectedApps}}
+    {{#if groupApps}}
+        {{truncate firstApp.trackName 20}}
+        and
+        {{appBucket.length}} more.
+    {{else}}
+        {{#each app in selectedApps}}
+            {{truncate app.trackName 20}}
+        {{/each}}
+    {{/if}}
+    <a {{action unselectAll}}>Unselect all</a>
+    <button class="btn btn-primary">Follow</button>
+{{/if}}

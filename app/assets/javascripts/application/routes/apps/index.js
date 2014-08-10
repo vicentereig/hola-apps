@@ -6,9 +6,15 @@ Watchtower.AppsIndexRoute = Ember.Route.extend({
     },
 
     model: function() {
+        var params = this.paramsFor('apps');
+
         this.get('store').cancelQuery('app');
 
-        return this.store.find('app', this.paramsFor('apps')).then(null, this.notFound);
+        if (Ember.isNone(params.term)){
+            return [];
+        }
+
+        return this.store.find('app', params).then(null, this.notFound);
     },
 
     notFound: function(){
