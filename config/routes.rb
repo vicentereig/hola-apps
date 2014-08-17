@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+  get 'ng_application' => 'ng_application#index'
   root to: 'application#index'
 
   namespace :api do

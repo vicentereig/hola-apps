@@ -21,5 +21,6 @@ module Watchtower
     # config.i18n.default_locale = :de
     config.handlebars.templates_root = 'application/templates'
     config.assets.version = '1.2'
+    config.assets.precompile += %w( ng_application.js )
   end
 end

@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Hola, Apps — AngularJS version </title>
+  <%= stylesheet_link_tag    'application', media: 'all'%>
+
+  <%= csrf_meta_tags %>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+</head>
+<body>
+
+<%= yield %>
+
+<%= javascript_include_tag 'ng_application' %>
+</body>
+</html>

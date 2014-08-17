@@ -21,6 +21,8 @@ end
 gem 'rails_12factor', group: :production
 gem 'ember-rails'
 gem 'ember-source', '1.7.0.beta5'
+gem 'angular-rails-templates'
+gem 'angularjs-rails'
 
 gem 'newrelic_rpm', group: :production
 gem 'bootstrap-sass', '~> 3.2.0'
