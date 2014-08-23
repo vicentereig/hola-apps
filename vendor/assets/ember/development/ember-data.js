@@ -1,5 +1,5 @@
-// Fetched from channel: canary, with url http://builds.emberjs.com/canary/ember-data.js
-// Fetched on: 2014-08-19T14:53:24Z
+// Fetched from channel: release, with url http://builds.emberjs.com/beta/ember-data.js
+// Fetched on: 2014-08-23T22:49:10Z
 (function(global){
 var define, requireModule, require, requirejs;
 
@@ -1927,11 +1927,11 @@ define("ember-data/core",
       /**
         @property VERSION
         @type String
-        @default '1.0.0-beta.10+canary.e704d90ec6'
+        @default '1.0.0-beta.9'
         @static
       */
       DS = Ember.Namespace.create({
-        VERSION: '1.0.0-beta.10+canary.e704d90ec6'
+        VERSION: '1.0.0-beta.9'
       });
 
       if (Ember.libraries) {
