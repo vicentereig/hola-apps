@@ -14,7 +14,10 @@
                 {{#each app in controller}}
                     <tr>
                         <td>{{input type="checkbox" name="isSelected" checked=app.isSelected}}</td>
-                        <td><img class="media-object" width="60" height="60" {{bind-attr src=app.artworkUrl60}}/></td>
+                        <td><a {{bind-attr href=app.trackViewUrl}}>
+				<img class="media-object" width="60" height="60" {{bind-attr src=app.artworkUrl60}}/>
+			</a>
+			</td>
                         <td>{{truncate app.trackName 40}}</td>
                         <td>{{app.version}}</td>
                         <td class="numeric">{{app.averageUserRating}}</td>

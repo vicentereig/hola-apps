@@ -44,5 +44,6 @@ Watchtower.App = DS.Model.extend({
     userRatingCount:   DS.attr('number'),
     version:           DS.attr('string'),
     averageUserRating: DS.attr('number'),
+    trackViewUrl:      DS.attr('string'),
     isSelected:        DS.attr('boolean', {defaultValue: false})
 });
