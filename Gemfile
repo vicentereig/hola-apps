@@ -20,7 +20,7 @@ end
 
 gem 'rails_12factor', group: :production
 gem 'ember-rails'
-gem 'ember-source', '1.7.0.beta5'
+gem 'ember-source', '1.8.0.beta1'
 gem 'angular-rails-templates'
 gem 'angularjs-rails'
 
