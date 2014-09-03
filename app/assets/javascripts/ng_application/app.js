@@ -14,29 +14,63 @@ Watchtower.config(['$stateProvider', function($stateProvider){
     $stateProvider.state('application.index', {
         route: '/apps',
         views: {
-            results: {
+            index: {
                 controller: 'AppIndexController',
                 template: 'ng_application/templates/apps/index.html'
             }
         },
         resolve: {
-            apps: ['$to', function($to){
-                // return store.find('apps', {term: $to.$params.term});
-               console.log($to.$params);
-               return [];
+            // 3. we trigger a search every time we transition to this state
+            apps: ['$to', 'DataStore', function($to, store){
+                if (!$to.$params.term) {
+                    return [];
+                }
+                store.cancelAll('software');
+                return store.findAll('software', {term: $to.$params.term});
             }]
         }
     });
 }]);
 
-function AppIndexController($scope, $state) {
+function DataStore($http, $q, $log) {
+    var cancelers = {};
+
+    this.cancelAll = function(resourceType) {
+        if (!angular.isUndefined(cancelers[resourceType])){
+            cancelers[resourceType].reject();
+        }
+    }
+
+    this.findAll = function(resourceType, params){
+        var canceler;
+
+        if (angular.isUndefined(cancelers[resourceType])){
+            canceler = $q.defer();
+            cancelers[resourceType] = canceler;
+        }
+
+        return $http.get(resourceUrl(resourceType), {params: params, timeout: canceler})
+                    .then(adaptResponse, $log.error);
+    }
+
+    function adaptResponse(response) {
+        return response.data.app;
+    }
+
+    function resourceUrl(resourceType) {
+       return ['/api', resourceType].join('/');
+    }
+}
+
+Watchtower.service('DataStore', ['$http', '$q', '$log', DataStore]);
+
+// 2. we listen to $scope.term changes to trigger a search
+function AppIndexController($scope, $state, apps) {
+    $scope.apps = apps;
     this.searchTermDidChange = function(newValue, oldValue){
-        console.log(newValue, oldValue);
         if (oldValue == newValue) {
             return;
         }
-//        $location.search({term: newValue});
-//        $state.reload('application.index', true);
         $state.goto('application.index', {term: newValue});
     };
 
@@ -51,8 +85,9 @@ Watchtower.directive('focus', function () {
     }
 });
 
-Watchtower.controller('AppIndexController', ['$scope', '$state', '$location', AppIndexController]);
+Watchtower.controller('AppIndexController', ['$scope', '$state', 'apps', AppIndexController]);
 
+// 1. $state sets the contents of the search box (if there's something to set fromt he query params)
 function ApplicationController($scope, $state) {
     $scope.term = $state.params.term;
 }

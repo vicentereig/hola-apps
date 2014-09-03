@@ -1,1 +1,31 @@
-<h2>results go here</h2>
+<div class="row">
+    <div class="col-md-9">
+        <table class="table">
+            <thead>
+            <th></th>
+            <th></th>
+            <th>App Name</th>
+            <th>Version</th>
+            <th>Rating</th>
+            <th>Rating count</th>
+            </thead>
+            <tbody>
+            <tr ng-repeat="app in apps">
+                <td>
+                    <input type="checkbox" ng-model="app.isSelected"/>
+                </td>
+                <td><a ng-href="{{app.trackViewUrl}}">
+                    <img class="media-object" width="60" height="60" ng-src="{{app.artworkUrl60}}"/>
+                    </a>
+                </td>
+                <td>{{app.trackName}}</td>
+                <td>{{app.version}}</td>
+                <td class="numeric">{{app.averageUserRating}}</td>
+                <td class="numeric">{{app.userRatingCount}}</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+</div>
+
