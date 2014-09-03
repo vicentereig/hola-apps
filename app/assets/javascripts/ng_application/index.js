@@ -5,4 +5,4 @@
 //= require angular-rails-templates
 
 //= require ./app.js
-//= require_tree ./templates
+//= require_tree .
