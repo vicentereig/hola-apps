@@ -5,17 +5,18 @@ Watchtower.config(['$stateProvider', function($stateProvider){
         route: '/',
         views: {
             application: {
+                controller: 'ApplicationController',
                 template: 'ng_application/templates/application.html'
             }
         }
     });
 
-    $stateProvider.state('application.results', {
+    $stateProvider.state('application.index', {
         route: '/apps',
         views: {
             results: {
-                controller: 'AppsController',
-                template: 'ng_application/templates/apps/results.html'
+                controller: 'AppIndexController',
+                template: 'ng_application/templates/apps/index.html'
             }
         },
         resolve: {
@@ -28,15 +29,18 @@ Watchtower.config(['$stateProvider', function($stateProvider){
     });
 }]);
 
-function AppsController($scope, $state) {
-
-    $scope.$watch('term', function(newValue, oldValue){
+function AppIndexController($scope, $state) {
+    this.searchTermDidChange = function(newValue, oldValue){
+        console.log(newValue, oldValue);
         if (oldValue == newValue) {
-            $scope.term = $state.current.$params.term;
             return;
         }
-        $state.goto('application.results', {term: newValue});
-    })
+//        $location.search({term: newValue});
+//        $state.reload('application.index', true);
+        $state.goto('application.index', {term: newValue});
+    };
+
+    $scope.$watch('term', this.searchTermDidChange);
 }
 
 Watchtower.directive('focus', function () {
@@ -47,4 +51,10 @@ Watchtower.directive('focus', function () {
     }
 });
 
-Watchtower.controller('AppsController', ['$scope', '$state', AppsController]);
+Watchtower.controller('AppIndexController', ['$scope', '$state', '$location', AppIndexController]);
+
+function ApplicationController($scope, $state) {
+    $scope.term = $state.params.term;
+}
+
+Watchtower.controller('ApplicationController', ['$scope', '$state', ApplicationController]);
