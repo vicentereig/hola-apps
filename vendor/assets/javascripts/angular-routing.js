@@ -3781,16 +3781,19 @@ var jemViewDirective = [
                         if (isDefined(activeLoader)) {
                             activeLoader.remove();
                             activeLoader = undefined;
-
-                            element.contents().show();
+                            var container = element.siblings()[element.siblings().length-1] || element;
+                            container = angular.element(container);
+                            container.contents().show();
                         }
                     }
 
                     function displayLoader() {
                         if (loader !== null) {
                             loader.then(function (html) {
-                                element.contents().hide();
-                                element.append(activeLoader = angular.element(html));
+                                var container = element.siblings()[element.siblings().length-1] || element;
+                                container = angular.element(container);
+                                container.contents().hide();
+                                container.append(activeLoader = angular.element(html));
                             });
                         }
                     }
