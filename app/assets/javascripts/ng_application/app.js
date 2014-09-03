@@ -37,19 +37,27 @@ function DataStore($http, $q, $log) {
 
     this.cancelAll = function(resourceType) {
         if (!angular.isUndefined(cancelers[resourceType])){
-            cancelers[resourceType].reject();
+            var cancelables = cancelers[resourceType].splice(0,cancelers[resourceType].length-1);
+            $log.debug('not cancelled: ', cancelers[resourceType].length);
+            var i = 0;
+            angular.forEach(cancelables, function(canceler){
+                $log.debug('cancelling', resourceType, i++);
+                canceler.resolve();
+            });
         }
     }
 
     this.findAll = function(resourceType, params){
         var canceler;
+        canceler = $q.defer();
 
         if (angular.isUndefined(cancelers[resourceType])){
-            canceler = $q.defer();
-            cancelers[resourceType] = canceler;
+            cancelers[resourceType] = [];
         }
 
-        return $http.get(resourceUrl(resourceType), {params: params, timeout: canceler})
+        cancelers[resourceType].push(canceler);
+
+        return $http.get(resourceUrl(resourceType), {params: params, timeout: canceler.promise})
                     .then(adaptResponse, $log.error);
     }
 
