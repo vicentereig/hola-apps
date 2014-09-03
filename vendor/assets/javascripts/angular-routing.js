@@ -832,7 +832,7 @@ angular.module('dotjem.routing').provider('$route', $RouteProvider).value('$rout
 
 /// <reference path="refs.d.ts" />
 function $PipelineProvider() {
-    var stages = [], stagesMap = {}, self = this;
+    var stages = [], stagesMap = {}, errorHandlers = {}, self = this;
 
     function indexOf(name) {
         for (var i = 0, l = stages.length; i < l; i++) {
@@ -909,17 +909,43 @@ function $PipelineProvider() {
         };
     };
 
+    this.error = function (name, handler) {
+        errorHandlers[name] = handler;
+        return this;
+    };
+
     this.$get = [
         '$q', '$inject',
         function ($q, $inject) {
             var sv = {};
 
-            sv.all = function () {
-                return stages.map(function (stg) {
+            sv.run = function (locals) {
+                var all = stages.map(function (stg) {
                     return $inject.create(stg.stage);
                 });
-            };
+                var defered = $q.defer();
+                var promise = $q.when(locals);
+                forEach(all, function (stage) {
+                    promise = promise.then(function () {
+                        if (locals.$error) {
+                            return;
+                            //throw Error(locals.$error);
+                        }
+                        return stage(locals);
+                    });
+                });
+                promise.then(defered.resolve, defered.reject);
 
+                defered.promise.catch(function onReject(error) {
+                    locals.$error = error;
+                    forEach(errorHandlers, function (handler) {
+                        handler = $inject.create(handler);
+                        handler(locals);
+                    });
+                });
+
+                return defered;
+            };
             return sv;
         }];
 }
@@ -1032,6 +1058,7 @@ angular.module('dotjem.routing').provider('$pipeline', $PipelineProvider).config
 
         pipeline.append('step7', [
             '$changes', '$context', '$rootScope', '$state', '$q', function ($changes, $context, $rootScope, $state, $q) {
+                //TODO: Pull event broadcasting back into state service...
                 if ($rootScope.$broadcast(EVENTS.STATE_CHANGE_START, $context.toState, $state.current).defaultPrevented) {
                     return $q.reject('Rejected state transition as canceled by user in ' + EVENTS.STATE_CHANGE_START + '.');
                 }
@@ -1070,6 +1097,7 @@ angular.module('dotjem.routing').provider('$pipeline', $PipelineProvider).config
 
         pipeline.append('step10', [
             '$changes', '$context', '$state', '$rootScope', '$args', function ($changes, $context, $state, $rootScope, $args) {
+                //TODO: Pull event broadcasting back into state service...
                 var fromState = $state.current;
                 $state.params = $args.params;
                 $state.current = $context.toState;
@@ -1087,6 +1115,15 @@ angular.module('dotjem.routing').provider('$pipeline', $PipelineProvider).config
                     return $context.emit.after($context.transition, $context.transaction).then(function () {
                         $scroll($context.scrollTo);
                     });
+                }
+            }]);
+
+        pipeline.error('error01', [
+            '$changes', '$context', '$rootScope', '$state', '$error', function ($changes, $context, $rootScope, $state, $error) {
+                //TODO: Pull event broadcasting back into state service...
+                $rootScope.$broadcast(EVENTS.STATE_CHANGE_ERROR, $context.toState, $state.current, $error);
+                if ($context.transaction && !$context.transaction.completed) {
+                    $context.transaction.cancel();
                 }
             }]);
     }]);
@@ -1887,7 +1924,7 @@ var $StateProvider = [
 
         this.$get = [
             '$rootScope', '$q', '$inject', '$route', '$view', '$stateTransition', '$location', '$scroll', '$resolve', '$exceptionHandler', '$pipeline',
-            function ($rootScope, $q, $inject, $route, $view, $transition, $location, $scroll, $resolve, $exceptionHandler, $stages) {
+            function ($rootScope, $q, $inject, $route, $view, $transition, $location, $scroll, $resolve, $exceptionHandler, $pipeline) {
                 function init(promise) {
                     var defer = $q.defer();
                     $route.$waitFor(defer.promise);
@@ -2171,7 +2208,7 @@ var $StateProvider = [
                     },
                     goto: function (state, params) {
                         return initPromise.then(function () {
-                            goto({
+                            return goto({
                                 state: state,
                                 params: buildParams(params),
                                 updateroute: true
@@ -2183,7 +2220,7 @@ var $StateProvider = [
                     },
                     reload: function (state) {
                         return initPromise.then(function () {
-                            reload(state);
+                            return reload(state);
                         });
                     },
                     url: function (arg1, arg2, arg3) {
@@ -2276,30 +2313,34 @@ var $StateProvider = [
                         forceReload = current.fullname;
                     }
 
+                    var defered = $q.defer();
                     $rootScope.$evalAsync(function () {
-                        goto({ state: current, params: $state.params, force: forceReload });
+                        goto({ state: current, params: $state.params, force: forceReload }).then(defered.resolve, defered.reject);
                     });
+                    return defered.promise;
                 }
 
                 var comparer = new StateComparer();
+                var running, inProgress = false;
                 function goto(args) {
+                    var defered = $q.defer();
+                    if (inProgress) {
+                        running.reject("Transition defered by another call to goto");
+                    }
+                    inProgress = true;
+
                     var next = browser.resolve(current, toName(args.state), false);
                     var changes = comparer.path(current, next, $state.params, args.params, { force: args.force });
+                    var context = { gotofn: goto };
 
-                    var promise = $q.when(changes), context = { gotofn: goto };
-                    forEach($stages.all(), function (stage) {
-                        promise = promise.then(function (path) {
-                            return stage({ $changes: changes, $context: context, $args: args });
-                        });
-                    });
-                    promise.then(function () {
+                    running = $pipeline.run({ $changes: changes, $context: context, $args: args });
+                    running.promise.then(function () {
                         current = changes.to;
-                    }, function (error) {
-                        $rootScope.$broadcast(EVENTS.STATE_CHANGE_ERROR, context.toState, $state.current, error);
-                        if (context.transaction && !context.transaction.completed) {
-                            context.transaction.cancel();
-                        }
+                        defered.resolve(current);
+                    }).catch(defered.reject).finally(function () {
+                        inProgress = false;
                     });
+                    return defered.promise;
                 }
                 return $state;
             }];
