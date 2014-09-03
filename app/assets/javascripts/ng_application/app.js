@@ -22,47 +22,85 @@ Watchtower.config(['$stateProvider', function($stateProvider){
         resolve: {
             // 3. we trigger a search every time we transition to this state
             apps: ['$to', 'DataStore', function($to, store){
+                store.cancelAll('software', {term: $to.$params.term});
+
                 if (!$to.$params.term) {
                     return [];
                 }
-                store.cancelAll('software');
+
                 return store.findAll('software', {term: $to.$params.term});
             }]
         }
     });
 }]);
 
-function DataStore($http, $q, $log) {
-    var cancelers = {};
+function RequestQueue($log, $timeout) {
+    var queues = [];
 
-    this.cancelAll = function(resourceType) {
-        if (!angular.isUndefined(cancelers[resourceType])){
-            var cancelables = cancelers[resourceType].splice(0,cancelers[resourceType].length-1);
-            $log.debug('not cancelled: ', cancelers[resourceType].length);
-            var i = 0;
-            angular.forEach(cancelables, function(canceler){
-                $log.debug('cancelling', resourceType, i++);
-                canceler.resolve();
-            });
+    function CancelableRequest(resourceType, params, deferred) {
+        var canceler = deferred;
+
+        this.promise      = canceler.promise.then(logCancellation, $log.error);
+        this.resourceType = resourceType;
+        this.params       = params;
+
+        this.cancel = function() {
+            $log.debug('Cancelling', this.resourceType, this.params);
+            return canceler.resolve({type: this.resourceType, params: this.params});
+        }
+
+        function logCancellation(request) {
+            $log.debug('Response cancelled: ', request.type, request.params);
         }
     }
 
-    this.findAll = function(resourceType, params){
-        var canceler;
-        canceler = $q.defer();
+    this.add = function(request){
+        var cancelable = new CancelableRequest(request.resourceType, request.params, request.deferred);
+        $timeout(function(){
+            queueFor(request.resourceType).push(cancelable);
+            $log.debug('Cancelable queue for', request.resourceType, ':', queueFor(request.resourceType).length);
+        });
 
-        if (angular.isUndefined(cancelers[resourceType])){
-            cancelers[resourceType] = [];
+        return cancelable.promise;
+    }
+
+    this.cancelAllPreviousRequests = function(resourceType) {
+        angular.forEach(allPreviousRequestsFor(resourceType), function(request){
+            request.cancel();
+        });
+    }
+
+    function queueFor(resourceType) {
+        if (angular.isUndefined(queues[resourceType])){
+            queues[resourceType] = [];
         }
+        return queues[resourceType];
+    }
 
-        cancelers[resourceType].push(canceler);
+    function allPreviousRequestsFor(resourceType) {
+        var resourceQueue = queueFor(resourceType);
+        $log.debug('Previous Requests for ', resourceType,':', resourceQueue.length);
+        return resourceQueue.splice(0, resourceQueue.length );
+    }
+}
 
-        return $http.get(resourceUrl(resourceType), {params: params, timeout: canceler.promise})
+Watchtower.service('requestQueue', ['$log', '$timeout', RequestQueue]);
+
+function DataStore($http, $log, $q, requestQueue) {
+    this.cancelAll = function(resourceType) {
+        requestQueue.cancelAllPreviousRequests(resourceType);
+    }
+
+    this.findAll = function(resourceType, params){
+        var canceler = requestQueue.add({resourceType: resourceType, params: params, deferred: $q.defer()});
+
+        return $http.get(resourceUrl(resourceType), {params: params, timeout: canceler})
                     .then(adaptResponse, $log.error);
     }
 
     function adaptResponse(response) {
-        return response.data.app;
+        var rootName = Object.keys(response.data)[0];
+        return response.data[rootName];
     }
 
     function resourceUrl(resourceType) {
@@ -70,7 +108,7 @@ function DataStore($http, $q, $log) {
     }
 }
 
-Watchtower.service('DataStore', ['$http', '$q', '$log', DataStore]);
+Watchtower.service('DataStore', ['$http', '$log', '$q', 'requestQueue', DataStore]);
 
 // 2. we listen to $scope.term changes to trigger a search
 function AppIndexController($scope, $state, apps) {
