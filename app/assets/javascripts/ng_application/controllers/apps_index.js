@@ -2,6 +2,14 @@
 function AppsIndexController($scope, apps) {
     $scope.apps = apps;
     $scope.showResults = apps.length > 0;
+
+    this.aggregateSelectedApps = function(apps) {
+        $scope.selectedApps = apps.filter(function(app) {
+            return app.isSelected;
+        });
+    }
+
+    $scope.$watch('apps', this.aggregateSelectedApps, true);
 }
 
 Watchtower.controller('AppsIndexController', ['$scope', 'apps', AppsIndexController]);
