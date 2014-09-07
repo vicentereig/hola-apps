@@ -18,10 +18,10 @@
                     <img class="media-object" width="60" height="60" ng-src="{{app.artworkUrl60}}"/>
                     </a>
                 </td>
-                <td>{{app.trackName}}</td>
+                <td>{{app.trackName | truncate:50}}</td>
                 <td>{{app.version}}</td>
                 <td class="numeric">{{app.averageUserRating}}</td>
-                <td class="numeric">{{app.userRatingCount}}</td>
+                <td class="numeric">{{app.userRatingCount | format}}</td>
             </tr>
             </tbody>
         </table>
