@@ -10,7 +10,7 @@ gem 'jquery-rails'
 
 gem 'sdoc', '~> 0.4.0',          group: :doc
 gem 'spring',        group: :development
-gem 'conquiro'
+gem 'conquiro', ' ~> 0.0.2'
 gem 'active_model_serializers', github: 'rails-api/active_model_serializers'
 
 group :development do

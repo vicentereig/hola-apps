@@ -54,7 +54,7 @@ GEM
       columnize (~> 0.8)
       debugger-linecache (~> 1.2)
     columnize (0.8.9)
-    conquiro (0.0.1)
+    conquiro (0.0.2)
       activemodel
       httparty
     crack (0.4.2)
@@ -93,7 +93,7 @@ GEM
       mime-types (~> 1.16)
       treetop (~> 1.4.8)
     mime-types (1.25.1)
-    minitest (5.4.0)
+    minitest (5.4.2)
     multi_json (1.10.1)
     multi_xml (0.5.5)
     newrelic_rpm (3.8.1.221)
@@ -191,7 +191,7 @@ DEPENDENCIES
   autoprefixer-rails
   bootstrap-sass (~> 3.2.0)
   byebug
-  conquiro
+  conquiro (~> 0.0.2)
   dotenv
   ember-rails
   ember-source (= 1.8.0.beta1)
