@@ -1,4 +1,4 @@
-Watchtower.config(['$stateProvider', function($stateProvider){
+HolaApps.config(['$stateProvider', function($stateProvider){
     $stateProvider.state('application', {
         route: '/',
         onEnter: ['$state', function($state){

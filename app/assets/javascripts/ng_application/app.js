@@ -1,2 +1,2 @@
-var Watchtower = angular.module('watchtower', ['dotjem.routing', 'templates']);
+var HolaApps = angular.module('hola-apps', ['dotjem.routing', 'templates']);
 

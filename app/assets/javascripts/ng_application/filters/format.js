@@ -1,4 +1,4 @@
-Watchtower.filter('format', function() {
+HolaApps.filter('format', function() {
     return function(value) {
         if (angular.isUndefined(value)){
             return 0;

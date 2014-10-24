@@ -12,4 +12,4 @@ function ApplicationController($scope, $state) {
     $scope.$watch('term', this.searchTermDidChange);
 }
 
-Watchtower.controller('ApplicationController', ['$scope', '$state', ApplicationController]);
+HolaApps.controller('ApplicationController', ['$scope', '$state', ApplicationController]);

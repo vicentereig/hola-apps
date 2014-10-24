@@ -20,7 +20,7 @@ function DataStore($http, $log, $q, requestQueue) {
     }
 }
 
-Watchtower.service('DataStore', ['$http', '$log', '$q', 'requestQueue', DataStore]);
+HolaApps.service('DataStore', ['$http', '$log', '$q', 'requestQueue', DataStore]);
 
 function RequestQueue($log, $timeout) {
     var queues = [];
@@ -72,4 +72,4 @@ function RequestQueue($log, $timeout) {
     }
 }
 
-Watchtower.service('requestQueue', ['$log', '$timeout', RequestQueue]);
+HolaApps.service('requestQueue', ['$log', '$timeout', RequestQueue]);

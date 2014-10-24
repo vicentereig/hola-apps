@@ -1,4 +1,4 @@
-Watchtower.filter('truncate', function() {
+HolaApps.filter('truncate', function() {
     return function(string, maxLength) {
         if(!maxLength) {
             maxLength = 40;

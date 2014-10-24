@@ -12,4 +12,4 @@ function AppsIndexController($scope, apps) {
     $scope.$watch('apps', this.aggregateSelectedApps, true);
 }
 
-Watchtower.controller('AppsIndexController', ['$scope', 'apps', AppsIndexController]);
+HolaApps.controller('AppsIndexController', ['$scope', 'apps', AppsIndexController]);

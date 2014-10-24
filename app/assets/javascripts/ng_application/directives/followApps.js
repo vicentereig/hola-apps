@@ -7,7 +7,7 @@ function FollowAppsDirective() {
     return this;
 }
 
-Watchtower.directive('followApps', FollowAppsDirective);
+HolaApps.directive('followApps', FollowAppsDirective);
 
 function FollowAppsController($scope) {
 
@@ -18,6 +18,6 @@ function FollowAppsController($scope) {
 
 }
 
-Watchtower.controller('FollowAppsController', ['$scope', FollowAppsController]);
+HolaApps.controller('FollowAppsController', ['$scope', FollowAppsController]);
 
 
